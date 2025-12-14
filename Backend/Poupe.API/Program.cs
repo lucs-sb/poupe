@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Poupe.API.Extensions;
 using Poupe.API.Mappers;
+using Poupe.API.Middleware;
 using Poupe.CrossCutting.IoC;
 using Poupe.Domain.Repositories;
 using System.Text.Json.Serialization;
@@ -57,6 +58,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
