@@ -12,16 +12,21 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Poupe.API.csproj", "."]
-RUN dotnet restore "./Poupe.API.csproj"
+COPY ["Backend/Poupe.API/Poupe.API.sln", "Backend/Poupe.API/"]
+COPY ["Backend/Poupe.API/Poupe.API.csproj", "Backend/Poupe.API/"]
+COPY ["Backend/Poupe.Domain/Poupe.Domain.csproj", "Backend/Poupe.Domain/"]
+COPY ["Backend/Poupe.CrossCutting/Poupe.CrossCutting.csproj", "Backend/Poupe.CrossCutting/"]
+COPY ["Backend/Poupe.Application/Poupe.Application.csproj", "Backend/Poupe.Application/"]
+COPY ["Backend/Poupe.Infrastructure/Poupe.Infrastructure.csproj", "Backend/Poupe.Infrastructure/"]
+RUN dotnet restore "Backend/Poupe.API/Poupe.API.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "./Poupe.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "Backend/Poupe.API/Poupe.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Poupe.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Backend/Poupe.API/Poupe.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
 FROM base AS final
