@@ -24,4 +24,19 @@
     <ProjectReference Include="..\Poupe.CrossCutting\Poupe.CrossCutting.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Resources\ApiMessage.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ApiMessage.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\ApiMessage.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ApiMessage.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

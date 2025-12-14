@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Poupe.API.Models.User;
+using Poupe.API.Resources;
 using Poupe.Domain.DTOs.User;
 using Poupe.Domain.Interfaces;
 
@@ -78,6 +79,6 @@ public class UserController : ControllerBase
     private static void ValidateGuid(string id)
     {
         if (!Guid.TryParse(id, out _))
-            throw new ArgumentException("Invalid GUID format", nameof(id));
+            throw new ArgumentException(string.Format(ApiMessage.Invalid_Warning, nameof(id)));
     }
 }

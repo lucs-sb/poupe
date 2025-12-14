@@ -34,6 +34,7 @@ public class ExceptionHandlingMiddleware
         return ex switch
         {
             InvalidOperationException => StatusCodes.Status400BadRequest,
+            ArgumentException => StatusCodes.Status400BadRequest,
             KeyNotFoundException => StatusCodes.Status404NotFound,
             UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
             _ => StatusCodes.Status500InternalServerError

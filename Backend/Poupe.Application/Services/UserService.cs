@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Poupe.Application.Resources;
 using Poupe.Domain.DTOs.User;
 using Poupe.Domain.Entities;
 using Poupe.Domain.Interfaces;
@@ -43,7 +44,7 @@ public class UserService : IUserService
 
         try
         {
-            User user = await _unitOfWork.Repository<User>().GetByIdAsync(id) ?? throw new KeyNotFoundException("Usuário não encontrado");
+            User user = await _unitOfWork.Repository<User>().GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
 
             _unitOfWork.Repository<User>().Remove(user);
 
@@ -70,7 +71,7 @@ public class UserService : IUserService
 
     public async Task<UserResponseDTO> GetByIdAsync(Guid id)
     {
-        User user = await _unitOfWork.Repository<User>().GetByIdAsync(id) ?? throw new KeyNotFoundException("Usuário não encontrado");
+        User user = await _unitOfWork.Repository<User>().GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
 
         //TODO exibir o total de receitas, despesas e o saldo (receita – despesa)
 
@@ -83,7 +84,7 @@ public class UserService : IUserService
 
         try
         {
-            User user = await _unitOfWork.Repository<User>().GetByIdAsync(id) ?? throw new KeyNotFoundException("Usuário não encontrado");
+            User user = await _unitOfWork.Repository<User>().GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
 
             userUpdateDTO.Adapt(user);
 
