@@ -15,6 +15,20 @@ namespace Poupe.Domain.Migrations
                 name: "PoupeDB");
 
             migrationBuilder.CreateTable(
+                name: "tb_category",
+                schema: "PoupeDB",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    purpose = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tb_category", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tb_user",
                 schema: "PoupeDB",
                 columns: table => new
@@ -32,6 +46,10 @@ namespace Poupe.Domain.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "tb_category",
+                schema: "PoupeDB");
+
             migrationBuilder.DropTable(
                 name: "tb_user",
                 schema: "PoupeDB");
