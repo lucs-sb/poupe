@@ -1,4 +1,7 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Poupe.API.Mappers;
 using Poupe.CrossCutting.IoC;
 using Poupe.Domain.Repositories;
 
@@ -16,7 +19,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PoupeDatabase")));
 
 // Dependences Injections
-builder.Services.AddSettings(builder.Configuration);
+builder.Services.AddApplicationDI();
+builder.Services.AddAInfrastructureDI();
+//builder.Services.AddSettings(builder.Configuration);
+
+//FluentValidation
+builder.Services.AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters()
+    .AddValidatorsFromAssemblyContaining<Program>();
+
+//Mapster
+builder.Services.RegisterMaps();
 
 var app = builder.Build();
 
