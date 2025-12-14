@@ -7,14 +7,14 @@ networks:
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: poupe-db
+    container_name: poupe_db
     environment:
-      SA_PASSWORD: "admin"
+      SA_PASSWORD: "Poupe@1234"
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "admin", "-Q", "SELECT 1", "-C"]
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Poupe@1234", "-Q", "SELECT 1", "-C"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,6 +22,19 @@ services:
       - poupe_network
     volumes:
       - sqlserver_data:/var/opt/mssql
+
+  api:
+    build:
+      context: .
+      dockerfile: Backend/Poupe.API/Dockerfile
+    container_name: poupe_api
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - poupe_network
+    ports:
+      - "8080:8080"
 
 volumes:
   sqlserver_data:
