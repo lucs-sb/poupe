@@ -13,6 +13,7 @@ public static class PipelineExtensions
     public static void AddApplicationDI(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ICategoryService, CategoryService>();
     }
 
     public static void AddAInfrastructureDI(this IServiceCollection services)

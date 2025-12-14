@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Poupe.API.Models.User;
-using Poupe.API.Resources;
+using Poupe.API.Utils;
 using Poupe.Domain.DTOs.User;
 using Poupe.Domain.Interfaces;
 
@@ -33,7 +33,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetByIdAsync([FromRoute(Name = "id")] string id)
     {
-        ValidateGuid(id);
+        Util.ValidateGuid(id);
 
         Guid identifier = Guid.Parse(id);
 
@@ -53,7 +53,7 @@ public class UserController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUserByIdAsync([FromRoute(Name = "id")] string id, [FromBody] UpdateUserModel updateUserModel)
     {
-        ValidateGuid(id);
+        Util.ValidateGuid(id);
 
         Guid identifier = Guid.Parse(id);
 
@@ -67,18 +67,12 @@ public class UserController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteByIdentifierAsync([FromRoute(Name = "id")] string id)
     {
-        ValidateGuid(id);
+        Util.ValidateGuid(id);
 
         Guid identifier = Guid.Parse(id);
 
         await _userService.DeleteByIdAsync(identifier);
 
         return NoContent();
-    }
-
-    private static void ValidateGuid(string id)
-    {
-        if (!Guid.TryParse(id, out _))
-            throw new ArgumentException(string.Format(ApiMessage.Invalid_Warning, nameof(id)));
     }
 }

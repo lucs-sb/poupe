@@ -12,7 +12,7 @@ using Poupe.Domain.Repositories;
 namespace Poupe.Domain.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251214204501_Migrations")]
+    [Migration("20251214225716_Migrations")]
     partial class Migrations
     {
         /// <inheritdoc />
@@ -24,6 +24,27 @@ namespace Poupe.Domain.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Poupe.Domain.Entities.Category", b =>
+                {
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("description");
+
+                    b.Property<int>("Purpose")
+                        .HasColumnType("int")
+                        .HasColumnName("purpose");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tb_category", "PoupeDB");
+                });
 
             modelBuilder.Entity("Poupe.Domain.Entities.User", b =>
                 {
