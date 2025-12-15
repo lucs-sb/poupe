@@ -3,6 +3,7 @@ using Poupe.Application.Resources;
 using Poupe.Domain.DTOs.User;
 using Poupe.Domain.Entities;
 using Poupe.Domain.Interfaces;
+using Poupe.Domain.Interfaces.Repositories;
 using Poupe.Domain.Interfaces.Repositories.Base;
 
 namespace Poupe.Application.Services;
@@ -10,10 +11,12 @@ namespace Poupe.Application.Services;
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ITransactionRepository _transactionRepository;
 
-    public UserService(IUnitOfWork unitOfWork)
+    public UserService(IUnitOfWork unitOfWork, ITransactionRepository transactionRepository)
     {
         _unitOfWork = unitOfWork;
+        _transactionRepository = transactionRepository;
     }
 
     public async Task<UserResponseDTO> CreateAsync(UserCreateDTO userCreateDTO)
@@ -48,7 +51,7 @@ public class UserService : IUserService
 
             _unitOfWork.Repository<User>().Remove(user);
 
-            //TODO: Remover todas a transações dessa pessoa
+            await _transactionRepository.DeleteByUserId(id);
 
             await _unitOfWork.CommitAsync();
         }
