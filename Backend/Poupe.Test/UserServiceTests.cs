@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
+using Poupe.Application.Resources;
 using Poupe.Application.Services;
 using Poupe.Domain.DTOs.User;
 using Poupe.Domain.Entities;
@@ -15,14 +16,11 @@ public class UserServiceTests
     private UserCreateDTO _userCreateDTO;
     private UserUpdateDTO _userUpdateDTO;
     private UserService _service;
-    Guid _id;
 
     [SetUp]
     public void SetUp()
     {
-        _id = Guid.NewGuid();
-
-        _user = new() { Id = _id, Name = "Lucas", Age = 23 };
+        _user = new() { Id = Guid.NewGuid(), Name = "Lucas", Age = 23 };
 
         _userCreateDTO = new UserCreateDTO("Lucas", 23);
 
@@ -31,14 +29,6 @@ public class UserServiceTests
         _unitOfWorkMock = new Mock<IUnitOfWork>();
 
         _service = new UserService(_unitOfWorkMock.Object);
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        _unitOfWorkMock = default!;
-        _userCreateDTO = default!;
-        _service = default!;
     }
 
     [Test]
@@ -71,7 +61,7 @@ public class UserServiceTests
     }
 
     [Test]
-    public void GetByIdAsync_WhenUserNotFound_ShouldThrowKeyNotFoundException()
+    public async Task GetByIdAsync_WhenUserNotFound_ShouldThrowKeyNotFoundException()
     {
         // Arrange
         _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User)null!);
@@ -80,25 +70,25 @@ public class UserServiceTests
         Func<Task> act = async () => await _service.GetByIdAsync(Guid.NewGuid());
 
         // Assert
-        act.Should().ThrowAsync<KeyNotFoundException>().WithMessage("Usuário não encontrado");
+        await act.Should().ThrowAsync<KeyNotFoundException>().WithMessage(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
     }
 
     [Test]
     public async Task GetByIdAsync_WhenFound_ShouldReturnUserResponseDTO()
     {
         // Arrange
-        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_id)).ReturnsAsync(_user);
+        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_user.Id!.Value)).ReturnsAsync(_user);
 
         // Act
-        UserResponseDTO result = await _service.GetByIdAsync(_id);
+        UserResponseDTO result = await _service.GetByIdAsync(_user.Id!.Value);
 
         // Assert
-        UserResponseDTO expected = new(_id.ToString(), "Lucas", 23);
+        UserResponseDTO expected = new(_user.Id!.Value.ToString(), "Lucas", 23);
         result.Should().BeEquivalentTo(expected);
     }
 
     [Test]
-    public void UpdateAsync_WhenUserNotFound_ShouldThrowKeyNotFoundException()
+    public async Task UpdateAsync_WhenUserNotFound_ShouldThrowKeyNotFoundException()
     {
         // Arrange
         _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User)null!);
@@ -107,17 +97,17 @@ public class UserServiceTests
         Func<Task> act = async () => await _service.UpdateAsync(Guid.NewGuid(), _userUpdateDTO);
 
         // Assert
-        act.Should().ThrowAsync<KeyNotFoundException>().WithMessage("Usuário não encontrado");
+        await act.Should().ThrowAsync<KeyNotFoundException>().WithMessage(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
     }
 
     [Test]
     public async Task UpdateAsync_WhenFound_ShouldUpdateAndCommit()
     {
         // Arrange
-        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_id)).ReturnsAsync(_user);
+        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_user.Id!.Value)).ReturnsAsync(_user);
 
         // Act
-        await _service.UpdateAsync(_id, _userUpdateDTO);
+        await _service.UpdateAsync(_user.Id!.Value, _userUpdateDTO);
 
         // Assert
         _unitOfWorkMock.Verify(u => u.BeginTransactionAsync(), Times.Once);
@@ -126,7 +116,7 @@ public class UserServiceTests
     }
 
     [Test]
-    public void DeleteByIdAsync_WhenUserNotFound_ShouldThrowKeyNotFoundException()
+    public async Task DeleteByIdAsync_WhenUserNotFound_ShouldThrowKeyNotFoundException()
     {
         // Arrange
         _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User)null!);
@@ -135,18 +125,18 @@ public class UserServiceTests
         Func<Task> act = async () => await _service.DeleteByIdAsync(Guid.NewGuid());
 
         // Assert
-        act.Should().ThrowAsync<KeyNotFoundException>().WithMessage("Usuário não encontrado");
+        await act.Should().ThrowAsync<KeyNotFoundException>().WithMessage(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
     }
 
     [Test]
     public async Task DeleteByIdAsync_WhenFound_ShouldAddAndCommit()
     {
         // Arrange
-        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_id)).ReturnsAsync(_user);
+        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_user.Id!.Value)).ReturnsAsync(_user);
         _unitOfWorkMock.Setup(r => r.Repository<User>().Remove(_user));
 
         // Act
-        await _service.DeleteByIdAsync(_id);
+        await _service.DeleteByIdAsync(_user.Id!.Value);
 
         // Assert
         _unitOfWorkMock.Verify(u => u.BeginTransactionAsync(), Times.Once);
