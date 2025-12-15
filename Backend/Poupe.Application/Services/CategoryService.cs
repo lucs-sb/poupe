@@ -16,6 +16,10 @@ public class CategoryService : ICategoryService
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Cria uma nova categoria no sistema.
+    /// </summary>
+    /// <param name="categoryCreateDTO">Dados da categoria.</param>
     public async Task<CategoryResponseDTO> CreateAsync(CategoryCreateDTO categoryCreateDTO)
     {
         await _unitOfWork.BeginTransactionAsync();
@@ -38,6 +42,13 @@ public class CategoryService : ICategoryService
         }
     }
 
+    /// <summary>
+    /// Deleta uma categoria pelo id.
+    /// </summary>
+    /// <param name="id">Identificador da categoria.</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando a categoria não é encontrada.
+    /// </exception>
     public async Task DeleteByIdAsync(Guid id)
     {
         await _unitOfWork.BeginTransactionAsync();
@@ -58,6 +69,9 @@ public class CategoryService : ICategoryService
         }
     }
 
+    /// <summary>
+    /// Busca por todas as categorias.
+    /// </summary>
     public async Task<List<CategoryResponseDTO>> GetAllAsync()
     {
         List<Category> categorys = await _unitOfWork.Repository<Category>().GetAllAsync();
@@ -65,6 +79,13 @@ public class CategoryService : ICategoryService
         return categorys.Adapt<List<CategoryResponseDTO>>();
     }
 
+    /// <summary>
+    /// Busca uma categoria pelo id.
+    /// </summary>
+    /// <param name="id">Identificador da categoria.</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando a categoria não é encontrada.
+    /// </exception>
     public async Task<CategoryResponseDTO> GetByIdAsync(Guid id)
     {
         Category category = await _unitOfWork.Repository<Category>().GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Categoria"));
@@ -72,6 +93,14 @@ public class CategoryService : ICategoryService
         return category.Adapt<CategoryResponseDTO>();
     }
 
+    /// <summary>
+    /// Edita uma categoria pelo id.
+    /// </summary>
+    /// <param name="id">Identificador da categoria.</param>
+    /// <param name="categoryUpdateDTO">Dados da categoria.</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando a categoria não é encontrada.
+    /// </exception>
     public async Task UpdateAsync(Guid id, CategoryUpdateDTO categoryUpdateDTO)
     {
         await _unitOfWork.BeginTransactionAsync();

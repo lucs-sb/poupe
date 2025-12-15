@@ -17,6 +17,17 @@ public class TransactionService : ITransactionService
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Cria uma nova transação no sistema.
+    /// </summary>
+    /// <param name="transactionCreateDTO">Dados da transação.</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando o usuário ou categoria não é encontrado.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Lançada quando o usuário é menor de 18 anos e a transação é do tipo Rceceita
+    /// ou quando o tipo de categoria é diferente do tipo de transação.
+    /// </exception>
     public async Task<TransactionResponseDTO> CreateAsync(TransactionCreateDTO transactionCreateDTO)
     {
         await _unitOfWork.BeginTransactionAsync();
@@ -51,6 +62,13 @@ public class TransactionService : ITransactionService
         }
     }
 
+    /// <summary>
+    /// Deleta uma transação pelo id.
+    /// </summary>
+    /// <param name="id">Identificador da transação.</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando a transação não é encontrada.
+    /// </exception>
     public async Task DeleteByIdAsync(Guid id)
     {
         await _unitOfWork.BeginTransactionAsync();
@@ -71,6 +89,9 @@ public class TransactionService : ITransactionService
         }
     }
 
+    /// <summary>
+    /// Busca por todas as transações.
+    /// </summary>
     public async Task<List<TransactionResponseDTO>> GetAllAsync()
     {
         List<Transaction> transactions = await _unitOfWork.Repository<Transaction>().GetAllAsync();
@@ -78,6 +99,13 @@ public class TransactionService : ITransactionService
         return transactions.Adapt<List<TransactionResponseDTO>>();
     }
 
+    /// <summary>
+    /// Busca uma transação pelo id.
+    /// </summary>
+    /// <param name="id">Identificador da transação.</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando a transação não é encontrada.
+    /// </exception>
     public async Task<TransactionResponseDTO> GetByIdAsync(Guid id)
     {
         Transaction transaction = await _unitOfWork.Repository<Transaction>().GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Transação"));
@@ -85,6 +113,17 @@ public class TransactionService : ITransactionService
         return transaction.Adapt<TransactionResponseDTO>();
     }
 
+    /// <summary>
+    /// Edita uma transação no sistema.
+    /// </summary>
+    /// <param name="id">Identificador da transação.</param>
+    /// <param name="transactionUpdateDTO">Dados da transação.</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando a transação ou categoria não é encontrada.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Lançada quando o tipo de categoria é diferente do tipo de transação.
+    /// </exception>
     public async Task UpdateAsync(Guid id, TransactionUpdateDTO transactionUpdateDTO)
     {
         await _unitOfWork.BeginTransactionAsync();

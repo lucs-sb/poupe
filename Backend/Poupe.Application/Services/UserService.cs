@@ -21,6 +21,10 @@ public class UserService : IUserService
         _transactionRepository = transactionRepository;
     }
 
+    /// <summary>
+    /// Cria um novo usuário no sistema.
+    /// </summary>
+    /// <param name="userCreateDTO">Dados do usuário.</param>
     public async Task<UserResponseDTO> CreateAsync(UserCreateDTO userCreateDTO)
     {
         await _unitOfWork.BeginTransactionAsync();
@@ -43,6 +47,13 @@ public class UserService : IUserService
         }
     }
 
+    /// <summary>
+    /// Deleta um usuário pelo id e todas suas transações vinculadas.
+    /// </summary>
+    /// <param name="id">Identificador do usuário.</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando o usuário não é encontrado.
+    /// </exception>
     public async Task DeleteByIdAsync(Guid id)
     {
         await _unitOfWork.BeginTransactionAsync();
@@ -65,6 +76,10 @@ public class UserService : IUserService
         }
     }
 
+    /// <summary>
+    /// Busca todos os usuários do sistema.
+    /// </summary>
+    /// <returns>Lista de usuários com dados pessoais mais despesas, receitas e saldo.</returns>
     public async Task<UserGetAllResponseDTO> GetAllAsync()
     {
         List<UserResponseDTO> userResponseDTOs = await _userRepository.GetAllAsync();
@@ -76,11 +91,27 @@ public class UserService : IUserService
         return ValueTuple.Create(userResponseDTOs, totalIncomes, totalExpenses, netBalance).Adapt<UserGetAllResponseDTO>();
     }
 
+    /// <summary>
+    /// Busca um usuário pelo id.
+    /// </summary>
+    /// <param name="id">Identificador do usuário.</param>
+    /// <returns>Dados pessoais do usuários mais despesas, receitas e saldo.</returns>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando o usuário não é encontrado.
+    /// </exception>
     public async Task<UserResponseDTO> GetByIdAsync(Guid id)
     {
         return await _userRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
     }
 
+    /// <summary>
+    /// Edita um usuário pelo id.
+    /// </summary>
+    /// <param name="id">Identificador do usuário.</param>
+    /// <param name="userUpdateDTO">Dados do usuário.</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Lançada quando o usuário não é encontrado.
+    /// </exception>
     public async Task UpdateAsync(Guid id, UserUpdateDTO userUpdateDTO)
     {
         await _unitOfWork.BeginTransactionAsync();
