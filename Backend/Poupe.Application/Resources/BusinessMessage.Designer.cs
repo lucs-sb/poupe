@@ -61,11 +61,29 @@ namespace Poupe.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Para menores de 18 anos serão aceitas somente despesas.
+        /// </summary>
+        public static string LegalAge_Error {
+            get {
+                return ResourceManager.GetString("LegalAge_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a {0} não encontrado(a).
         /// </summary>
         public static string NotFound_Warning {
             get {
                 return ResourceManager.GetString("NotFound_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a O tipo de transação deve ser igual a finalidade da categoria.
+        /// </summary>
+        public static string TransactionType_Error {
+            get {
+                return ResourceManager.GetString("TransactionType_Error", resourceCulture);
             }
         }
     }

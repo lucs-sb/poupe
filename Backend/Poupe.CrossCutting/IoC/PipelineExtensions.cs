@@ -14,6 +14,7 @@ public static class PipelineExtensions
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<ITransactionService, TransactionService>();
     }
 
     public static void AddAInfrastructureDI(this IServiceCollection services)
