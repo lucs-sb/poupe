@@ -2,6 +2,7 @@
 using Poupe.Application.Resources;
 using Poupe.Domain.DTOs.Transaction;
 using Poupe.Domain.Entities;
+using Poupe.Domain.Enums;
 using Poupe.Domain.Interfaces;
 using Poupe.Domain.Interfaces.Repositories.Base;
 
@@ -22,6 +23,18 @@ public class TransactionService : ITransactionService
 
         try
         {
+            Category category = await _unitOfWork.Repository<Category>().GetByIdAsync(transactionCreateDTO.CategoryId) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Categoria"));
+
+            if (category.Purpose != CategoryType.Both && transactionCreateDTO.Type.ToString() != category.Purpose.ToString())
+                throw new InvalidOperationException(BusinessMessage.TransactionType_Error);
+            
+            User user = await _unitOfWork.Repository<User>().GetByIdAsync(transactionCreateDTO.UserId) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
+
+            int legalAge = 18;
+
+            if (user.Age < legalAge && transactionCreateDTO.Type != TransactionType.Expense)
+                throw new InvalidOperationException(BusinessMessage.LegalAge_Error);
+
             Transaction transaction = transactionCreateDTO.Adapt<Transaction>();
 
             await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
@@ -78,6 +91,11 @@ public class TransactionService : ITransactionService
 
         try
         {
+            Category category = await _unitOfWork.Repository<Category>().GetByIdAsync(transactionUpdateDTO.CategoryId) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Categoria"));
+
+            if (category.Purpose != CategoryType.Both && transactionUpdateDTO.Type.ToString() != category.Purpose.ToString())
+                throw new InvalidOperationException(string.Format(BusinessMessage.NotFound_Warning, "Categoria"));
+
             Transaction transaction = await _unitOfWork.Repository<Transaction>().GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Transação"));
 
             transactionUpdateDTO.Adapt(transaction);
