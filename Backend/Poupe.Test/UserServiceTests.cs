@@ -11,13 +11,19 @@ namespace Poupe.Test;
 public class UserServiceTests
 {
     private Mock<IUnitOfWork> _unitOfWorkMock;
+    private User _user;
     private UserCreateDTO _userCreateDTO;
     private UserUpdateDTO _userUpdateDTO;
     private UserService _service;
+    Guid _id;
 
     [SetUp]
     public void SetUp()
     {
+        _id = Guid.NewGuid();
+
+        _user = new() { Id = _id, Name = "Lucas", Age = 23 };
+
         _userCreateDTO = new UserCreateDTO("Lucas", 23);
 
         _userUpdateDTO = new UserUpdateDTO("Lucas", 24);
@@ -54,8 +60,7 @@ public class UserServiceTests
     public async Task CreateAsync_WhenNewUser_ShouldReturnUserResponseDTO()
     {
         // Arrange
-        User user = new() { Name = "Lucas", Age = 23 };
-        _unitOfWorkMock.Setup(r => r.Repository<User>().AddAsync(user)).Returns(Task.CompletedTask);
+        _unitOfWorkMock.Setup(r => r.Repository<User>().AddAsync(_user)).Returns(Task.CompletedTask);
 
         // Act
         UserResponseDTO result = await _service.CreateAsync(_userCreateDTO);
@@ -82,15 +87,13 @@ public class UserServiceTests
     public async Task GetByIdAsync_WhenFound_ShouldReturnUserResponseDTO()
     {
         // Arrange
-        Guid id = Guid.NewGuid();
-        User user = new() { Id = id, Name = "Lucas", Age = 23 };
-        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(id)).ReturnsAsync(user);
+        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_id)).ReturnsAsync(_user);
 
         // Act
-        UserResponseDTO result = await _service.GetByIdAsync(id);
+        UserResponseDTO result = await _service.GetByIdAsync(_id);
 
         // Assert
-        UserResponseDTO expected = new(id.ToString(), "Lucas", 23);
+        UserResponseDTO expected = new(_id.ToString(), "Lucas", 23);
         result.Should().BeEquivalentTo(expected);
     }
 
@@ -111,12 +114,10 @@ public class UserServiceTests
     public async Task UpdateAsync_WhenFound_ShouldUpdateAndCommit()
     {
         // Arrange
-        Guid id = Guid.NewGuid();
-        User user = new() { Id = id, Name = "Lucas", Age = 23 };
-        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(id)).ReturnsAsync(user);
+        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_id)).ReturnsAsync(_user);
 
         // Act
-        await _service.UpdateAsync(id, _userUpdateDTO);
+        await _service.UpdateAsync(_id, _userUpdateDTO);
 
         // Assert
         _unitOfWorkMock.Verify(u => u.BeginTransactionAsync(), Times.Once);
@@ -141,13 +142,11 @@ public class UserServiceTests
     public async Task DeleteByIdAsync_WhenFound_ShouldAddAndCommit()
     {
         // Arrange
-        Guid id = Guid.NewGuid();
-        User user = new() { Id = id, Name = "Lucas", Age = 23 };
-        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(id)).ReturnsAsync(user);
-        _unitOfWorkMock.Setup(r => r.Repository<User>().Remove(user));
+        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_id)).ReturnsAsync(_user);
+        _unitOfWorkMock.Setup(r => r.Repository<User>().Remove(_user));
 
         // Act
-        await _service.DeleteByIdAsync(id);
+        await _service.DeleteByIdAsync(_id);
 
         // Assert
         _unitOfWorkMock.Verify(u => u.BeginTransactionAsync(), Times.Once);
