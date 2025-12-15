@@ -12,7 +12,7 @@ public class User
     [Column("id")]
     public Guid? Id { get; set; }
 
-    [Column("identifier")]
+    [Column("name")]
     [Required]
     [MaxLength(100)]
     public string Name { get; set; } = null!;

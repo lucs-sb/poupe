@@ -1,5 +1,5 @@
 ﻿namespace Poupe.Domain.DTOs.User;
 
-public record UserResponseDTO(string Id, string Name, int Age)
+public record UserResponseDTO(Guid Id, string Name, int Age, decimal Incomes, decimal Expenses, decimal Balance)
 {
 }

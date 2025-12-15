@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Poupe.Domain.Settings;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Poupe.Domain.Interfaces;
 using Poupe.Domain.Interfaces.Repositories;
 using Poupe.Domain.Interfaces.Repositories.Base;
@@ -24,9 +22,6 @@ public static class PipelineExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
-    //public static void AddSettings(this IServiceCollection services, IConfiguration configuration)
-    //{
-    //    services.Configure<PoupeDatabaseSettings>(configuration.GetSection("PoupeDatabase"));
-    //}
 }

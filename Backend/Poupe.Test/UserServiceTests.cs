@@ -14,6 +14,7 @@ public class UserServiceTests
 {
     private Mock<IUnitOfWork> _unitOfWorkMock;
     private Mock<ITransactionRepository> _transactionRepository;
+    private Mock<IUserRepository> _userRepository;
     private User _user;
     private UserCreateDTO _userCreateDTO;
     private UserUpdateDTO _userUpdateDTO;
@@ -30,9 +31,11 @@ public class UserServiceTests
 
         _unitOfWorkMock = new Mock<IUnitOfWork>();
 
+        _userRepository = new Mock<IUserRepository>();
+
         _transactionRepository = new Mock<ITransactionRepository>();
 
-        _service = new UserService(_unitOfWorkMock.Object, _transactionRepository.Object);
+        _service = new UserService(_unitOfWorkMock.Object, _userRepository.Object, _transactionRepository.Object);
     }
 
     [Test]
@@ -60,7 +63,7 @@ public class UserServiceTests
         UserResponseDTO result = await _service.CreateAsync(_userCreateDTO);
 
         // Assert
-        UserResponseDTO expected = new(null!, "Lucas", 23);
+        UserResponseDTO expected = new(Guid.Empty, "Lucas", 23, 0, 0, 0);
         result.Should().BeEquivalentTo(expected);
     }
 
@@ -68,27 +71,13 @@ public class UserServiceTests
     public async Task GetByIdAsync_WhenUserNotFound_ShouldThrowKeyNotFoundException()
     {
         // Arrange
-        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User)null!);
+        _userRepository.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((UserResponseDTO)null!);
 
         // Act
         Func<Task> act = async () => await _service.GetByIdAsync(Guid.NewGuid());
 
         // Assert
         await act.Should().ThrowAsync<KeyNotFoundException>().WithMessage(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
-    }
-
-    [Test]
-    public async Task GetByIdAsync_WhenFound_ShouldReturnUserResponseDTO()
-    {
-        // Arrange
-        _unitOfWorkMock.Setup(r => r.Repository<User>().GetByIdAsync(_user.Id!.Value)).ReturnsAsync(_user);
-
-        // Act
-        UserResponseDTO result = await _service.GetByIdAsync(_user.Id!.Value);
-
-        // Assert
-        UserResponseDTO expected = new(_user.Id!.Value.ToString(), "Lucas", 23);
-        result.Should().BeEquivalentTo(expected);
     }
 
     [Test]

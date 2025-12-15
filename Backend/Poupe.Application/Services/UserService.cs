@@ -11,11 +11,13 @@ namespace Poupe.Application.Services;
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
     private readonly ITransactionRepository _transactionRepository;
 
-    public UserService(IUnitOfWork unitOfWork, ITransactionRepository transactionRepository)
+    public UserService(IUnitOfWork unitOfWork, IUserRepository userRepository, ITransactionRepository transactionRepository)
     {
         _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
         _transactionRepository = transactionRepository;
     }
 
@@ -63,22 +65,20 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<List<UserResponseDTO>> GetAllAsync()
+    public async Task<UserGetAllResponseDTO> GetAllAsync()
     {
-        List<User> users = await _unitOfWork.Repository<User>().GetAllAsync();
+        List<UserResponseDTO> userResponseDTOs = await _userRepository.GetAllAsync();
 
-        //TODO exibir o total de receitas, despesas e o saldo (receita – despesa) de cada pessoa
+        decimal totalIncomes = userResponseDTOs.Sum(x => x.Incomes);
+        decimal totalExpenses = userResponseDTOs.Sum(x => x.Expenses);
+        decimal netBalance = totalIncomes - totalExpenses;
 
-        return users.Adapt<List<UserResponseDTO>>();
+        return ValueTuple.Create(userResponseDTOs, totalIncomes, totalExpenses, netBalance).Adapt<UserGetAllResponseDTO>();
     }
 
     public async Task<UserResponseDTO> GetByIdAsync(Guid id)
     {
-        User user = await _unitOfWork.Repository<User>().GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
-
-        //TODO exibir o total de receitas, despesas e o saldo (receita – despesa)
-
-        return user.Adapt<UserResponseDTO>();
+        return await _userRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Usuário"));
     }
 
     public async Task UpdateAsync(Guid id, UserUpdateDTO userUpdateDTO)

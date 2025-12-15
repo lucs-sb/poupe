@@ -34,5 +34,12 @@ public static class UserMappingConfigurations
             .NewConfig()
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.Age, src => src.Age);
+
+        TypeAdapterConfig<(List<UserResponseDTO>, decimal, decimal, decimal), UserGetAllResponseDTO>
+            .NewConfig()
+            .Map(dest => dest.Users, src => src.Item1)
+            .Map(dest => dest.TotalIncomes, src => src.Item2)
+            .Map(dest => dest.TotalExpenses, src => src.Item3)
+            .Map(dest => dest.NetBalance, src => src.Item4);
     }
 }

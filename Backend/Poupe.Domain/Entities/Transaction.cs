@@ -1,4 +1,5 @@
-﻿using Poupe.Domain.Enums;
+﻿using Microsoft.EntityFrameworkCore;
+using Poupe.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,6 +18,7 @@ public class Transaction
     public string Description { get; set; } = null!;
 
     [Column("value")]
+    [Precision(18, 2)]
     [Required]
     public decimal Value { get; set; }
 

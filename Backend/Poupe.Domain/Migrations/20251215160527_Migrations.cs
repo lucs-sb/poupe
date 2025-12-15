@@ -29,12 +29,29 @@ namespace Poupe.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tb_transaction",
+                schema: "PoupeDB",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    value = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    type = table.Column<int>(type: "int", nullable: false),
+                    category_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    user_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tb_transaction", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tb_user",
                 schema: "PoupeDB",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    identifier = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     age = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -48,6 +65,10 @@ namespace Poupe.Domain.Migrations
         {
             migrationBuilder.DropTable(
                 name: "tb_category",
+                schema: "PoupeDB");
+
+            migrationBuilder.DropTable(
+                name: "tb_transaction",
                 schema: "PoupeDB");
 
             migrationBuilder.DropTable(

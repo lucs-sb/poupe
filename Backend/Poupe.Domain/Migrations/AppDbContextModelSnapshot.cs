@@ -43,6 +43,40 @@ namespace Poupe.Domain.Migrations
                     b.ToTable("tb_category", "PoupeDB");
                 });
 
+            modelBuilder.Entity("Poupe.Domain.Entities.Transaction", b =>
+                {
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("category_id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("description");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int")
+                        .HasColumnName("type");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("user_id");
+
+                    b.Property<decimal>("Value")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("value");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tb_transaction", "PoupeDB");
+                });
+
             modelBuilder.Entity("Poupe.Domain.Entities.User", b =>
                 {
                     b.Property<Guid?>("Id")
@@ -58,7 +92,7 @@ namespace Poupe.Domain.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
-                        .HasColumnName("identifier");
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 
