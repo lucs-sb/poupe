@@ -4,6 +4,7 @@ using Poupe.Application.Resources;
 using Poupe.Application.Services;
 using Poupe.Domain.DTOs.User;
 using Poupe.Domain.Entities;
+using Poupe.Domain.Interfaces.Repositories;
 using Poupe.Domain.Interfaces.Repositories.Base;
 
 namespace Poupe.Test;
@@ -12,6 +13,7 @@ namespace Poupe.Test;
 public class UserServiceTests
 {
     private Mock<IUnitOfWork> _unitOfWorkMock;
+    private Mock<ITransactionRepository> _transactionRepository;
     private User _user;
     private UserCreateDTO _userCreateDTO;
     private UserUpdateDTO _userUpdateDTO;
@@ -28,7 +30,9 @@ public class UserServiceTests
 
         _unitOfWorkMock = new Mock<IUnitOfWork>();
 
-        _service = new UserService(_unitOfWorkMock.Object);
+        _transactionRepository = new Mock<ITransactionRepository>();
+
+        _service = new UserService(_unitOfWorkMock.Object, _transactionRepository.Object);
     }
 
     [Test]
@@ -141,6 +145,7 @@ public class UserServiceTests
         // Assert
         _unitOfWorkMock.Verify(u => u.BeginTransactionAsync(), Times.Once);
         _unitOfWorkMock.Verify(r => r.Repository<User>().Remove(It.IsAny<User>()), Times.Once);
+        _transactionRepository.Verify(r => r.DeleteByUserId(It.IsAny<Guid>()), Times.Once);
         _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
     }
 }
