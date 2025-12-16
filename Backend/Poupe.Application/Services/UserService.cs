@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Identity;
 using Poupe.Application.Resources;
 using Poupe.Domain.DTOs.User;
 using Poupe.Domain.Entities;
@@ -13,25 +14,37 @@ public class UserService : IUserService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
     private readonly ITransactionRepository _transactionRepository;
+    private readonly IPasswordHasher<User> _passwordHasher;
 
-    public UserService(IUnitOfWork unitOfWork, IUserRepository userRepository, ITransactionRepository transactionRepository)
+    public UserService(IUnitOfWork unitOfWork, IUserRepository userRepository, ITransactionRepository transactionRepository, IPasswordHasher<User> passwordHasher)
     {
         _unitOfWork = unitOfWork;
         _userRepository = userRepository;
         _transactionRepository = transactionRepository;
+        _passwordHasher = passwordHasher;
     }
 
     /// <summary>
     /// Cria um novo usuário no sistema.
     /// </summary>
     /// <param name="userCreateDTO">Dados do usuário.</param>
+    /// <exception cref="InvalidOperationException">
+    /// Lançada quando o email já existe.
+    /// </exception>
     public async Task<UserResponseDTO> CreateAsync(UserCreateDTO userCreateDTO)
     {
         await _unitOfWork.BeginTransactionAsync();
 
         try
         {
-            User user = userCreateDTO.Adapt<User>();
+            User? user = await _userRepository.GetByEmailAsync(userCreateDTO.Email);
+
+            if (user is not null)
+                throw new InvalidOperationException(BusinessMessage.AlreadyExists_Warning);
+
+            user = userCreateDTO.Adapt<User>();
+
+            user.Password = _passwordHasher.HashPassword(user, userCreateDTO.Password);
 
             await _unitOfWork.Repository<User>().AddAsync(user);
 

@@ -1,6 +1,8 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Poupe.API.Extensions;
 using Poupe.API.Mappers;
 using Poupe.API.Middleware;
@@ -33,7 +35,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Dependences Injections
 builder.Services.AddApplicationDI();
 builder.Services.AddAInfrastructureDI();
-//builder.Services.AddSettings(builder.Configuration);
+builder.Services.AddSettings(builder.Configuration);
 
 //FluentValidation
 builder.Services.AddFluentValidationAutoValidation()
@@ -42,6 +44,25 @@ builder.Services.AddFluentValidationAutoValidation()
 
 //Mapster
 builder.Services.RegisterMaps();
+
+builder.Services.AddAuthentication(authOptions =>
+{
+    authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["AuthSettings:SecretKey"]!)),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -62,6 +83,8 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

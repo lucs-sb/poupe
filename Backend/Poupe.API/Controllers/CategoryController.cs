@@ -10,6 +10,7 @@ namespace Poupe.API.Controllers;
 
 [ApiController]
 [Route("api/category")]
+[Authorize]
 public class CategoryController : ControllerBase
 {
     private readonly ICategoryService _categoryService;
@@ -20,7 +21,6 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost]
-    [AllowAnonymous]
     public async Task<IActionResult> CreateAsync([FromBody] CreateCategoryModel createCategoryModel)
     {
         CategoryCreateDTO categoryCreateDTO = createCategoryModel.Adapt<CategoryCreateDTO>();

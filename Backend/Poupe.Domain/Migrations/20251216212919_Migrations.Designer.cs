@@ -12,7 +12,7 @@ using Poupe.Domain.Repositories;
 namespace Poupe.Domain.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251215160527_Migrations")]
+    [Migration("20251216212919_Migrations")]
     partial class Migrations
     {
         /// <inheritdoc />
@@ -91,11 +91,21 @@ namespace Poupe.Domain.Migrations
                         .HasColumnType("int")
                         .HasColumnName("age");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("email");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("name");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("password");
 
                     b.HasKey("Id");
 

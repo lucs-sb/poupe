@@ -32,4 +32,18 @@ public class User
     [Column("age")]
     [Required]
     public int Age { get; set; }
+
+    /// <summary>
+    /// Email para login.
+    /// </summary>
+    [Column("email")]
+    [Required]
+    public string? Email { get; set; }
+
+    /// <summary>
+    /// Senha para login.
+    /// </summary>
+    [Column("password")]
+    [Required]
+    public string? Password { get; set; }
 }

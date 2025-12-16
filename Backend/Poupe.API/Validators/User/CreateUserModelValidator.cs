@@ -19,5 +19,15 @@ public class CreateUserModelValidator : AbstractValidator<CreateUserModel>
             .WithMessage(string.Format(ApiMessage.Require_Warning, "age"))
             .GreaterThanOrEqualTo(0)
             .WithMessage(string.Format(ApiMessage.Invalid_Warning, "age"));
+
+        RuleFor(model => model.Email)
+            .NotEmpty()
+            .WithMessage(model => string.Format(ApiMessage.Require_Warning, "email"))
+            .EmailAddress()
+            .WithMessage(model => string.Format(ApiMessage.Invalid_Warning, "email"));
+
+        RuleFor(model => model.Password)
+            .NotEmpty()
+            .WithMessage(model => string.Format(ApiMessage.Require_Warning, "password"));
     }
 }
