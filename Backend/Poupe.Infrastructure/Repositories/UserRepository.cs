@@ -18,7 +18,6 @@ public class UserRepository : Repository<User>, IUserRepository
                 u.id,
                 u.name,
                 u.age,
-                u.email,
                 COALESCE(SUM(CASE WHEN t.type = 0 THEN t.value ELSE 0 END), 0) AS incomes,
                 COALESCE(SUM(CASE WHEN t.type = 1 THEN t.value ELSE 0 END), 0) AS expenses,
                 COALESCE(SUM(CASE WHEN t.type = 0 THEN t.value ELSE 0 END), 0)
@@ -29,8 +28,7 @@ public class UserRepository : Repository<User>, IUserRepository
             GROUP BY
                 u.id,
                 u.name,
-                u.age,
-                u.email
+                u.age
         ").ToListAsync();
     }
 
@@ -41,7 +39,6 @@ public class UserRepository : Repository<User>, IUserRepository
                 u.id,
                 u.name,
                 u.age,
-                u.email,
                 COALESCE(SUM(CASE WHEN t.type = 0 THEN t.value ELSE 0 END), 0) AS incomes,
                 COALESCE(SUM(CASE WHEN t.type = 1 THEN t.value ELSE 0 END), 0) AS expenses,
                 COALESCE(SUM(CASE WHEN t.type = 0 THEN t.value ELSE 0 END), 0)
@@ -54,11 +51,7 @@ public class UserRepository : Repository<User>, IUserRepository
             GROUP BY
                 u.id,
                 u.name,
-                u.age,
-                u.email
+                u.age
         ", id).SingleOrDefaultAsync();
     }
-
-    public async Task<User?> GetByEmailAsync(string email) => await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
-    
 }

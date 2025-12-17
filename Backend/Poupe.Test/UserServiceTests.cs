@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Identity;
 using Moq;
 using Poupe.Application.Resources;
 using Poupe.Application.Services;
@@ -16,7 +15,6 @@ public class UserServiceTests
     private Mock<IUnitOfWork> _unitOfWorkMock;
     private Mock<ITransactionRepository> _transactionRepository;
     private Mock<IUserRepository> _userRepository;
-    private Mock<IPasswordHasher<User>> _passwordHasher;
     private User _user;
     private UserCreateDTO _userCreateDTO;
     private UserUpdateDTO _userUpdateDTO;
@@ -27,9 +25,9 @@ public class UserServiceTests
     {
         _user = new() { Id = Guid.NewGuid(), Name = "Lucas", Age = 23 };
 
-        _userCreateDTO = new UserCreateDTO("Lucas", 23, "lucas@lucas.com", "1234");
+        _userCreateDTO = new UserCreateDTO("Lucas", 23);
 
-        _userUpdateDTO = new UserUpdateDTO("Lucas", 24, "lucas@lucas.com");
+        _userUpdateDTO = new UserUpdateDTO("Lucas", 24);
 
         _unitOfWorkMock = new Mock<IUnitOfWork>();
 
@@ -37,22 +35,7 @@ public class UserServiceTests
 
         _transactionRepository = new Mock<ITransactionRepository>();
 
-        _passwordHasher = new Mock<IPasswordHasher<User>>();
-
-        _service = new UserService(_unitOfWorkMock.Object, _userRepository.Object, _transactionRepository.Object, _passwordHasher.Object);
-    }
-
-    [Test]
-    public async Task CreateAsync_WhenUserExists_ShouldThrowInvalidOperationExceptionException()
-    {
-        // Arrange
-        _userRepository.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(_user);
-
-        // Act
-        Func<Task> act = async () => await _service.CreateAsync(_userCreateDTO);
-
-        // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>().WithMessage(BusinessMessage.AlreadyExists_Warning);
+        _service = new UserService(_unitOfWorkMock.Object, _userRepository.Object, _transactionRepository.Object);
     }
 
     [Test]
@@ -80,7 +63,7 @@ public class UserServiceTests
         UserResponseDTO result = await _service.CreateAsync(_userCreateDTO);
 
         // Assert
-        UserResponseDTO expected = new(Guid.Empty, "Lucas", 23, "lucas@lucas.com", 0, 0, 0);
+        UserResponseDTO expected = new(Guid.Empty, "Lucas", 23, 0, 0, 0);
         result.Should().BeEquivalentTo(expected);
     }
 

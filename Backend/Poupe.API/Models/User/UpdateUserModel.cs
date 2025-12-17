@@ -9,7 +9,4 @@ public class UpdateUserModel
 
     [JsonPropertyName("age")]
     public int? Age { get; set; }
-
-    [JsonPropertyName("email")]
-    public string? Email { get; set; }
 }

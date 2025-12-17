@@ -19,11 +19,5 @@ public class UpdateUserModelValidator : AbstractValidator<UpdateUserModel>
             .WithMessage(string.Format(ApiMessage.Require_Warning, "age"))
             .GreaterThanOrEqualTo(0)
             .WithMessage(string.Format(ApiMessage.Invalid_Warning, "age"));
-
-        RuleFor(model => model.Email)
-            .NotEmpty()
-            .WithMessage(model => string.Format(ApiMessage.Require_Warning, "email"))
-            .EmailAddress()
-            .WithMessage(model => string.Format(ApiMessage.Invalid_Warning, "email"));
     }
 }

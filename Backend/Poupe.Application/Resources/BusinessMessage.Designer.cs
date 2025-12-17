@@ -61,15 +61,6 @@ namespace Poupe.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Email já cadastrado.
-        /// </summary>
-        public static string AlreadyExists_Warning {
-            get {
-                return ResourceManager.GetString("AlreadyExists_Warning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Para menores de 18 anos serão aceitas somente despesas.
         /// </summary>
         public static string LegalAge_Error {
@@ -93,15 +84,6 @@ namespace Poupe.Application.Resources {
         public static string TransactionType_Error {
             get {
                 return ResourceManager.GetString("TransactionType_Error", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Email ou senha incorreto.
-        /// </summary>
-        public static string Unauthorized_Warning {
-            get {
-                return ResourceManager.GetString("Unauthorized_Warning", resourceCulture);
             }
         }
     }

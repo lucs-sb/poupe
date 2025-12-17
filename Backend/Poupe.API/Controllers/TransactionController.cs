@@ -10,7 +10,6 @@ namespace Poupe.API.Controllers;
 
 [ApiController]
 [Route("api/transaction")]
-[Authorize]
 public class TransactionController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
@@ -21,6 +20,7 @@ public class TransactionController : ControllerBase
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> CreateAsync([FromBody] CreateTransactionModel createTransactionModel)
     {
         TransactionCreateDTO transactionCreateDTO = createTransactionModel.Adapt<TransactionCreateDTO>();
