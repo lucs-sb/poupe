@@ -80,7 +80,7 @@ public class UserService : IUserService
     /// Busca todos os usuários do sistema.
     /// </summary>
     /// <returns>Lista de usuários com dados pessoais mais despesas, receitas e saldo.</returns>
-    public async Task<UserGetAllResponseDTO> GetAllAsync()
+    public async Task<UserSummaryResponseDTO> GetAllAsync()
     {
         List<UserResponseDTO> userResponseDTOs = await _userRepository.GetAllAsync();
 
@@ -88,7 +88,7 @@ public class UserService : IUserService
         decimal totalExpenses = userResponseDTOs.Sum(x => x.Expenses);
         decimal netBalance = totalIncomes - totalExpenses;
 
-        return ValueTuple.Create(userResponseDTOs, totalIncomes, totalExpenses, netBalance).Adapt<UserGetAllResponseDTO>();
+        return ValueTuple.Create(userResponseDTOs, totalIncomes, totalExpenses, netBalance).Adapt<UserSummaryResponseDTO>();
     }
 
     /// <summary>

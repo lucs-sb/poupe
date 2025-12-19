@@ -12,7 +12,7 @@ using Poupe.Domain.Repositories;
 namespace Poupe.Domain.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251215160527_Migrations")]
+    [Migration("20251219003230_Migrations")]
     partial class Migrations
     {
         /// <inheritdoc />

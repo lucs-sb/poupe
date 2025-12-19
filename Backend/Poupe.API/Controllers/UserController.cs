@@ -45,9 +45,9 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetByAllAsync()
     {
-        UserGetAllResponseDTO userGetAllResponseDTO = await _userService.GetAllAsync();
+        UserSummaryResponseDTO userSummaryResponseDTO = await _userService.GetAllAsync();
 
-        return Ok(userGetAllResponseDTO);
+        return Ok(userSummaryResponseDTO);
     }
 
     [HttpPut("{id}")]
