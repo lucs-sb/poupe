@@ -5,6 +5,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import { useSubmit } from "react-router";
 import CancelButton from "~/components/buttons/CancelButton";
 import DeleteButton from "~/components/buttons/DeleteButton";
 
@@ -15,9 +16,20 @@ type DeleteTransactionProps = {
 };
 
 export default function DeleteTransaction({ open, onClose, id }: DeleteTransactionProps) {
+  const submit = useSubmit();
+  
+  const handleDelete = () => {
+    const fd = new FormData();
+    fd.set("id", id);
+
+    submit(fd, { method: "DELETE" });
+    handleClose();
+  };
+
   const handleClose = () => {
     onClose();
   };
+
   return (
     <>
       <Dialog
@@ -34,7 +46,7 @@ export default function DeleteTransaction({ open, onClose, id }: DeleteTransacti
         </DialogContent>
         <DialogActions>
           <CancelButton onClick={handleClose} />
-          <DeleteButton onClick={handleClose} />
+          <DeleteButton onClick={handleDelete} />
         </DialogActions>
       </Dialog>
     </>

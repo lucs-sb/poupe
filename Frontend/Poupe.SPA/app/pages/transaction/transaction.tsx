@@ -13,101 +13,27 @@ import {
   Grid,
   IconButton,
 } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import theme from "~/theme/theme";
 import AddButton from "~/components/buttons/AddButton";
 import AddTransaction from "./transaction.add";
 import DeleteTransaction from "./transaction.delete";
+import type { Transaction } from "~/domain/transaction/transaction.type";
+import { translateTransactionType } from "~/domain/mappers/mapper";
 
-type TipoTransacao = "despesa" | "receita";
-type Finalidade = "despesa" | "receita" | "ambas";
-
-type HomeRow = {
-    id: string;
-  name: string;
-  age: number;
-  receitas: number;
-  despesas: number;
-  saldo: number;
-};
-
-type CategoryRow = {
-  id: string;
-  descricao: string;
-  finalidade: Finalidade;
-};
-
-const MOCK_CATEGORIAS: CategoryRow[] = [
-  {
-    id: crypto.randomUUID(),
-    descricao: "Alimentação",
-    finalidade: "despesa",
-  },
-  {
-    id: crypto.randomUUID(),
-    descricao: "Salário",
-    finalidade: "receita",
-  }
-];
-
-const MOCK_PESSOAS: HomeRow[] = [
-  {
-    id: crypto.randomUUID(),
-    name: "Ana Silva",
-    age: 29,
-    receitas: 4500,
-    despesas: 2800,
-    saldo: 1700,
-  },
-  {
-    id: crypto.randomUUID(),
-    name: "Bruno Costa",
-    age: 17,
-    receitas: 0,
-    despesas: 600,
-    saldo: -600,
-  }
-];
-
-type TransacaoRow = {
-  id: string; 
-  descricao: string; 
-  valor: number; 
-  tipo: TipoTransacao;
-  categoriaId: string; 
-  pessoaId: string; 
-};
-
-const MOCK_ROWS: TransacaoRow[] = [
-  {
-    id: crypto.randomUUID(),
-    descricao: "Supermercado do mês",
-    valor: 680.5,
-    tipo: "despesa",
-    categoriaId: MOCK_CATEGORIAS[0].id, 
-    pessoaId: MOCK_PESSOAS[0].id, 
-  },
-  {
-    id: crypto.randomUUID(),
-    descricao: "Pagamento mensal",
-    valor: 4500.0,
-    tipo: "receita",
-    categoriaId: MOCK_CATEGORIAS[0].id, 
-    pessoaId: MOCK_PESSOAS[0].id, 
-  }
-];
-
-export default function TransactionPage() {
+export default function TransactionPage(transactions: Transaction[]) {
   const [openAddTransaction, setOpenAddTransaction] = useState(false);
   const [openDeleteTransaction, setOpenDeleteTransaction] = useState(false);
-  const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
+  const [selectedTransactionId, setSelectedTransactionId] = useState<
+    string | null
+  >(null);
 
-  const [rows, setRows] = useState<TransacaoRow[]>([]);
+  const [rows, setRows] = useState<Transaction[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowsTotal, setRowsTotal] = useState(0);
 
-    const handleDeleteTransaction = (id: string) => {
+  const handleDeleteTransaction = (id: string) => {
     setSelectedTransactionId(id);
     setOpenDeleteTransaction(true);
   };
@@ -123,19 +49,22 @@ export default function TransactionPage() {
     setPage(0);
   };
 
-    useEffect(() => {
-    setRows(MOCK_ROWS);
-    setRowsTotal(MOCK_ROWS.length);
+  useEffect(() => {
+    setRows(transactions ?? []);
+    setRowsTotal(transactions?.length ?? 0);
   }, []);
 
   return (
     <>
-    <AddTransaction open={openAddTransaction} onClose={() => setOpenAddTransaction(false)} />
-          <DeleteTransaction
-            open={openDeleteTransaction}
-            onClose={() => setOpenDeleteTransaction(false)}
-            id={selectedTransactionId!}
-          />
+      <AddTransaction
+        open={openAddTransaction}
+        onClose={() => setOpenAddTransaction(false)}
+      />
+      <DeleteTransaction
+        open={openDeleteTransaction}
+        onClose={() => setOpenDeleteTransaction(false)}
+        id={selectedTransactionId!}
+      />
       <Grid
         container
         spacing={2}
@@ -183,13 +112,6 @@ export default function TransactionPage() {
                 rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
-                    const categoria = MOCK_CATEGORIAS.find(
-                      (c) => c.id === row.categoriaId
-                    );
-                    const pessoa = MOCK_PESSOAS.find(
-                      (p) => p.id === row.pessoaId
-                    );
-
                     return (
                       <TableRow
                         key={row.id}
@@ -199,10 +121,10 @@ export default function TransactionPage() {
                       >
                         <TableCell align="center">{row.id}</TableCell>
 
-                        <TableCell>{row.descricao}</TableCell>
+                        <TableCell>{row.description}</TableCell>
 
                         <TableCell align="center">
-                          {row.valor.toLocaleString("pt-BR", {
+                          {row.value.toLocaleString("pt-BR", {
                             style: "currency",
                             currency: "BRL",
                           })}
@@ -213,30 +135,32 @@ export default function TransactionPage() {
                           sx={{
                             fontWeight: 600,
                             color:
-                              row.tipo === "receita"
+                              row.type === "Income"
                                 ? "success.main"
                                 : "error.main",
                             textTransform: "capitalize",
                           }}
                         >
-                          {row.tipo}
+                          {translateTransactionType(row.type)}
                         </TableCell>
 
                         <TableCell>
-                          {categoria ? categoria.descricao : "—"}
+                          {row.category ? row.category.description : "—"}
                         </TableCell>
 
-                        <TableCell>{pessoa ? pessoa.name : "—"}</TableCell>
+                        <TableCell>
+                          {row.people ? row.people.name : "—"}
+                        </TableCell>
 
                         <TableCell>
-                        <IconButton
-                          onClick={() => handleDeleteTransaction(row.id)}
-                          aria-label="Deletar"
-                          title="Deletar"
-                        >
-                          <DeleteIcon color="error" />
-                        </IconButton>
-                      </TableCell>
+                          <IconButton
+                            onClick={() => handleDeleteTransaction(row.id)}
+                            aria-label="Deletar"
+                            title="Deletar"
+                          >
+                            <DeleteIcon color="error" />
+                          </IconButton>
+                        </TableCell>
                       </TableRow>
                     );
                   })

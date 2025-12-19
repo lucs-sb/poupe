@@ -21,7 +21,7 @@ import DeleteCategory from "./category.delete";
 import type { Category } from "~/domain/category/category.type";
 import { translatePurpose } from "~/domain/mappers/mapper";
 
-export default function CategoryPage( category: Category[]) {
+export default function CategoryPage(categories: Category[]) {
   const [openAddCategory, setOpenAddCategory] = useState(false);
   const [openDeleteCategory, setOpenDeleteCategory] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
@@ -50,8 +50,8 @@ export default function CategoryPage( category: Category[]) {
   };
 
   useEffect(() => {
-    setRows(category ?? []);
-    setRowsTotal(category?.length ?? 0);
+    setRows(categories ?? []);
+    setRowsTotal(categories?.length ?? 0);
   }, []);
 
   return (
@@ -101,7 +101,7 @@ export default function CategoryPage( category: Category[]) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {category?.map((row) => (
+              {categories?.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell align="center">{row.id}</TableCell>
                   <TableCell align="center">{row.description}</TableCell>
