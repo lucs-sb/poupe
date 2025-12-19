@@ -12,6 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy
+            .WithOrigins(builder.Configuration["Frontend:Url"]!)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -44,6 +55,8 @@ builder.Services.AddFluentValidationAutoValidation()
 builder.Services.RegisterMaps();
 
 var app = builder.Build();
+
+app.UseCors("FrontendPolicy");
 
 // Apply pending migrations at startup
 using (var scope = app.Services.CreateScope())
