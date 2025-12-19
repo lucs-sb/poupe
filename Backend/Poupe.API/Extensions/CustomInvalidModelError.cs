@@ -28,11 +28,11 @@ public class CustomInvalidModelError
 
         var objectResult = new
         {
-            mensagem = "Requisição inválida",
+            message = "Requisição inválida",
             erros = jsonResult.Select(entry => new
             {
-                campo = entry.Key,
-                mensagens = entry.Value
+                field = entry.Key,
+                messages = entry.Value
             }).ToList()
         };
 
