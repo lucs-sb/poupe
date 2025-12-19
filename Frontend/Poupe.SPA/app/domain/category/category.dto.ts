@@ -1,0 +1,1 @@
+export type CreateCategoryDTO = { description: string; purpose: string };

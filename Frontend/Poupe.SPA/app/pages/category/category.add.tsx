@@ -11,6 +11,7 @@ import {
   Select,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
+import { useSubmit } from "react-router";
 import AddButton from "~/components/buttons/AddButton";
 import CancelButton from "~/components/buttons/CancelButton";
 
@@ -20,12 +21,18 @@ type AddCategoryProps = {
 };
 
 export default function AddCategory({ open, onClose }: AddCategoryProps) {
+  const submit = useSubmit();
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm();
+
+  const onSubmit = (data: any) => {
+    submit(data, { method: "POST" });
+    handleClose();
+  };
 
   const handleClose = () => {
     reset();
@@ -89,7 +96,7 @@ export default function AddCategory({ open, onClose }: AddCategoryProps) {
         </DialogContent>
         <DialogActions>
           <CancelButton onClick={handleClose} />
-          <AddButton onClick={handleClose} />
+          <AddButton onClick={handleSubmit(onSubmit)} />
         </DialogActions>
       </Dialog>
     </>

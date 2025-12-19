@@ -18,36 +18,17 @@ import theme from "~/theme/theme";
 import AddButton from "~/components/buttons/AddButton";
 import AddCategory from "./category.add";
 import DeleteCategory from "./category.delete";
+import type { Category } from "~/domain/category/category.type";
+import { translatePurpose } from "~/domain/mappers/mapper";
 
-type Finalidade = "despesa" | "receita" | "ambas";
-
-type CategoryRow = {
-  id: string;
-  descricao: string;
-  finalidade: Finalidade;
-};
-
-const MOCK_ROWS: CategoryRow[] = [
-  {
-    id: crypto.randomUUID(),
-    descricao: "Alimentação",
-    finalidade: "despesa",
-  },
-  {
-    id: crypto.randomUUID(),
-    descricao: "Salário",
-    finalidade: "receita",
-  }
-];
-
-export default function CategoryPage() {
+export default function CategoryPage( category: Category[]) {
   const [openAddCategory, setOpenAddCategory] = useState(false);
   const [openDeleteCategory, setOpenDeleteCategory] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null
   );
 
-  const [rows, setRows] = useState<CategoryRow[]>([]);
+  const [rows, setRows] = useState<Category[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowsTotal, setRowsTotal] = useState(0);
@@ -69,8 +50,8 @@ export default function CategoryPage() {
   };
 
   useEffect(() => {
-    setRows(MOCK_ROWS);
-    setRowsTotal(MOCK_ROWS.length);
+    setRows(category ?? []);
+    setRowsTotal(category?.length ?? 0);
   }, []);
 
   return (
@@ -120,24 +101,24 @@ export default function CategoryPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {MOCK_ROWS.map((row) => (
+              {category?.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell align="center">{row.id}</TableCell>
-                  <TableCell align="center">{row.descricao}</TableCell>
+                  <TableCell align="center">{row.description}</TableCell>
                   <TableCell
                     align="center"
                     sx={{
                       textTransform: "capitalize",
                       color:
-                        row.finalidade === "receita"
+                        row.purpose === "Income"
                           ? "success.main"
-                          : row.finalidade === "despesa"
+                          : row.purpose === "Expense"
                             ? "error.main"
                             : "warning.main",
                       fontWeight: 600,
                     }}
                   >
-                    {row.finalidade}
+                    {translatePurpose(row.purpose)}
                   </TableCell>
                   <TableCell>
                     <IconButton
