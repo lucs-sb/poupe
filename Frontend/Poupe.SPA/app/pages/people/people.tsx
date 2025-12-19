@@ -21,42 +21,16 @@ import theme from "~/theme/theme";
 import AddButton from "~/components/buttons/AddButton";
 import AddPeople from "./people.add";
 import DeletePeople from "./people.delete";
-
-type HomeRow = {
-    id: string;
-  name: string;
-  age: number;
-  receitas: number;
-  despesas: number;
-  saldo: number;
-};
-
-const MOCK_ROWS: HomeRow[] = [
-  {
-    id: crypto.randomUUID(),
-    name: "Ana Silva",
-    age: 29,
-    receitas: 4500,
-    despesas: 2800,
-    saldo: 1700,
-  },
-  {
-    id: crypto.randomUUID(),
-    name: "Bruno Costa",
-    age: 17,
-    receitas: 0,
-    despesas: 600,
-    saldo: -600,
-  }
-];
+import type { PeopleSummaryDTO } from "~/domain/people/people.dto";
+import type { People } from "~/domain/people/people.type";
 
 
-export default function PeoplePage() {
+export default function PeoplePage(peopleSummaryDTO: PeopleSummaryDTO) {
   const [openAddPeople, setOpenAddPeople] = useState(false);
   const [openDeletePeople, setOpenDeletePeople] = useState(false);
   const [selectedPeopleId, setSelectedPeopleId] = useState<string | null>(null);
 
-  const [rows, setRows] = useState<HomeRow[]>([]);
+  const [rows, setRows] = useState<People[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowsTotal, setRowsTotal] = useState(0);
@@ -78,9 +52,9 @@ export default function PeoplePage() {
   };
 
   useEffect(() => {
-    setRows(MOCK_ROWS);
-    setRowsTotal(MOCK_ROWS.length);
-  }, []);
+    setRows(peopleSummaryDTO?.users ?? []);
+    setRowsTotal(peopleSummaryDTO?.users?.length ?? 0);
+  }, [peopleSummaryDTO]);
 
   return (
     <>
@@ -117,7 +91,10 @@ export default function PeoplePage() {
                   color: theme.palette.success.main,
                 }}
               >
-                R$ 1500,00
+                {peopleSummaryDTO?.totalIncomes?.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
               </Typography>
             </CardContent>
           </Card>
@@ -140,7 +117,10 @@ export default function PeoplePage() {
                   color: theme.palette.error.main,
                 }}
               >
-                R$ 1500,00
+                {peopleSummaryDTO?.totalExpenses?.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
               </Typography>
             </CardContent>
           </Card>
@@ -163,7 +143,10 @@ export default function PeoplePage() {
                   color: theme.palette.success.main,
                 }}
               >
-                R$ 1500,00
+                {peopleSummaryDTO?.netBalance?.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
               </Typography>
             </CardContent>
           </Card>
@@ -229,7 +212,7 @@ export default function PeoplePage() {
                         align="center"
                         sx={{ color: theme.palette.success.main }}
                       >
-                        {row.receitas.toLocaleString("pt-BR", {
+                        {row.incomes.toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
                         })}
@@ -238,7 +221,7 @@ export default function PeoplePage() {
                         align="center"
                         sx={{ color: theme.palette.error.main }}
                       >
-                        {row.despesas.toLocaleString("pt-BR", {
+                        {row.expenses.toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
                         })}
@@ -248,12 +231,12 @@ export default function PeoplePage() {
                         sx={{
                           fontWeight: 600,
                           color:
-                            row.saldo >= 0
+                            row.balance >= 0
                               ? theme.palette.success.main
                               : theme.palette.error.main,
                         }}
                       >
-                        {row.saldo.toLocaleString("pt-BR", {
+                        {row.balance.toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
                         })}

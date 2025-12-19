@@ -6,6 +6,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
+import { useSubmit } from "react-router";
 import AddButton from "~/components/buttons/AddButton";
 import CancelButton from "~/components/buttons/CancelButton";
 
@@ -15,6 +16,7 @@ type AddPeopleProps = {
 };
 
 export default function AddPeople({ open, onClose }: AddPeopleProps) {
+  const submit = useSubmit();
   const {
     control,
     handleSubmit,
@@ -26,6 +28,11 @@ export default function AddPeople({ open, onClose }: AddPeopleProps) {
     reset();
     onClose();
   };
+
+  const onSubmit = (data: any) => {
+    submit(data, { method: "POST" });
+    handleClose();
+  }
 
   return (
     <>
@@ -73,7 +80,7 @@ export default function AddPeople({ open, onClose }: AddPeopleProps) {
         </DialogContent>
         <DialogActions>
           <CancelButton onClick={handleClose} />
-          <AddButton onClick={handleClose} />
+          <AddButton onClick={handleSubmit(onSubmit)} />
         </DialogActions>
       </Dialog>
     </>
