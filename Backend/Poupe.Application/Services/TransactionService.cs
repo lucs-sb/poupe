@@ -4,6 +4,7 @@ using Poupe.Domain.DTOs.Transaction;
 using Poupe.Domain.Entities;
 using Poupe.Domain.Enums;
 using Poupe.Domain.Interfaces;
+using Poupe.Domain.Interfaces.Repositories;
 using Poupe.Domain.Interfaces.Repositories.Base;
 
 namespace Poupe.Application.Services;
@@ -11,10 +12,12 @@ namespace Poupe.Application.Services;
 public class TransactionService : ITransactionService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ITransactionRepository _transactionRepository;
 
-    public TransactionService(IUnitOfWork unitOfWork)
+    public TransactionService(IUnitOfWork unitOfWork, ITransactionRepository transactionRepository)
     {
         _unitOfWork = unitOfWork;
+        _transactionRepository = transactionRepository;
     }
 
     /// <summary>
@@ -47,6 +50,9 @@ public class TransactionService : ITransactionService
                 throw new InvalidOperationException(BusinessMessage.LegalAge_Error);
 
             Transaction transaction = transactionCreateDTO.Adapt<Transaction>();
+
+            transaction.Category = category;
+            transaction.User = user;
 
             await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
 
@@ -94,9 +100,7 @@ public class TransactionService : ITransactionService
     /// </summary>
     public async Task<List<TransactionResponseDTO>> GetAllAsync()
     {
-        List<Transaction> transactions = await _unitOfWork.Repository<Transaction>().GetAllAsync();
-
-        return transactions.Adapt<List<TransactionResponseDTO>>();
+        return await _transactionRepository.GetAllAsync();
     }
 
     /// <summary>
@@ -108,9 +112,7 @@ public class TransactionService : ITransactionService
     /// </exception>
     public async Task<TransactionResponseDTO> GetByIdAsync(Guid id)
     {
-        Transaction transaction = await _unitOfWork.Repository<Transaction>().GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Transação"));
-
-        return transaction.Adapt<TransactionResponseDTO>();
+        return await _transactionRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Transação"));
     }
 
     /// <summary>
@@ -138,6 +140,8 @@ public class TransactionService : ITransactionService
             Transaction transaction = await _unitOfWork.Repository<Transaction>().GetByIdAsync(id) ?? throw new KeyNotFoundException(string.Format(BusinessMessage.NotFound_Warning, "Transação"));
 
             transactionUpdateDTO.Adapt(transaction);
+
+            transaction.Category = category;
 
             _unitOfWork.Repository<Transaction>().Update(transaction);
 

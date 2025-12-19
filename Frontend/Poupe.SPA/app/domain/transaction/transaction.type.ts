@@ -8,5 +8,5 @@ export type Transaction = {
   value: number; 
   type: TransactionType;
   category: Category; 
-  people: People; 
+  user: People; 
 };

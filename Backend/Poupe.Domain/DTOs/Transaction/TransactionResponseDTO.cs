@@ -1,7 +1,9 @@
-﻿using Poupe.Domain.Enums;
+﻿using Poupe.Domain.DTOs.Category;
+using Poupe.Domain.DTOs.User;
+using Poupe.Domain.Enums;
 
 namespace Poupe.Domain.DTOs.Transaction;
 
-public record TransactionResponseDTO (string Id, string Description, decimal Value, TransactionType Type, string CategoryId, string UserId)
+public record TransactionResponseDTO (Guid Id, string Description, decimal Value, TransactionType Type, CategoryResponseDTO? Category, UserResponseDTO? User)
 {
 }

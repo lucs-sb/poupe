@@ -22,17 +22,8 @@ public static class TransactionMappingConfigurations
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.Value, src => src.Value)
             .Map(dest => dest.Type, src => src.Type)
-            .Map(dest => dest.CategoryId, src => src.CategoryId)
-            .Map(dest => dest.UserId, src => src.UserId);
-
-        TypeAdapterConfig<Transaction, TransactionResponseDTO>
-            .NewConfig()
-            .Map(dest => dest.Id, src => src.Id)
-            .Map(dest => dest.Description, src => src.Description)
-            .Map(dest => dest.Value, src => src.Value)
-            .Map(dest => dest.Type, src => src.Type)
-            .Map(dest => dest.CategoryId, src => src.CategoryId)
-            .Map(dest => dest.UserId, src => src.UserId);
+            .Ignore(dest => dest.Category)
+            .Ignore(dest => dest.User);
 
         TypeAdapterConfig<UpdateTransactionModel, TransactionUpdateDTO>
             .NewConfig()
@@ -46,6 +37,6 @@ public static class TransactionMappingConfigurations
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.Value, src => src.Value)
             .Map(dest => dest.Type, src => src.Type)
-            .Map(dest => dest.CategoryId, src => src.CategoryId);
+            .Ignore(dest => dest.Category);
     }
 }

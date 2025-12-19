@@ -24,7 +24,7 @@ public class UserRepository : Repository<User>, IUserRepository
                     - COALESCE(SUM(CASE WHEN t.type = 1 THEN t.value ELSE 0 END), 0) AS balance
             FROM
                 PoupeDB.tb_user u
-                LEFT JOIN PoupeDB.tb_transaction t ON t.user_id = u.id
+                LEFT JOIN PoupeDB.tb_transaction t ON t.UserId = u.id
             GROUP BY
                 u.id,
                 u.name,
@@ -45,7 +45,7 @@ public class UserRepository : Repository<User>, IUserRepository
                     - COALESCE(SUM(CASE WHEN t.type = 1 THEN t.value ELSE 0 END), 0) AS balance
             FROM
                 PoupeDB.tb_user u
-                LEFT JOIN PoupeDB.tb_transaction t ON t.user_id = u.id
+                LEFT JOIN PoupeDB.tb_transaction t ON t.UserId = u.id
             WHERE
                 u.id = {0}
             GROUP BY

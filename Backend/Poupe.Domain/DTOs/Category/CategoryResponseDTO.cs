@@ -2,6 +2,6 @@
 
 namespace Poupe.Domain.DTOs.Category;
 
-public record CategoryResponseDTO (string Id, string Description, CategoryType Purpose)
+public record CategoryResponseDTO (Guid Id, string Description, CategoryType Purpose)
 {
 }

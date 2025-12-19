@@ -12,7 +12,7 @@ using Poupe.Domain.Repositories;
 namespace Poupe.Domain.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251219003230_Migrations")]
+    [Migration("20251219134905_Migrations")]
     partial class Migrations
     {
         /// <inheritdoc />
@@ -54,8 +54,7 @@ namespace Poupe.Domain.Migrations
                         .HasColumnName("id");
 
                     b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("category_id");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -67,8 +66,7 @@ namespace Poupe.Domain.Migrations
                         .HasColumnName("type");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Value")
                         .HasPrecision(18, 2)
@@ -76,6 +74,10 @@ namespace Poupe.Domain.Migrations
                         .HasColumnName("value");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("tb_transaction", "PoupeDB");
                 });
@@ -100,6 +102,25 @@ namespace Poupe.Domain.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tb_user", "PoupeDB");
+                });
+
+            modelBuilder.Entity("Poupe.Domain.Entities.Transaction", b =>
+                {
+                    b.HasOne("Poupe.Domain.Entities.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Poupe.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

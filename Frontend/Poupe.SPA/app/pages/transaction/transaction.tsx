@@ -149,7 +149,7 @@ export default function TransactionPage(transactions: Transaction[]) {
                         </TableCell>
 
                         <TableCell>
-                          {row.people ? row.people.name : "—"}
+                          {row.user ? row.user.name : "—"}
                         </TableCell>
 
                         <TableCell>

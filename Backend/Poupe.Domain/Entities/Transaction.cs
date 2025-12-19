@@ -46,12 +46,12 @@ public class Transaction
     /// </summary>
     [Column("category_id")]
     [Required]
-    public Guid CategoryId { get; set; }
+    public Category Category { get; set; }
 
     /// <summary>
     /// Usuário vinculado a transação.
     /// </summary>
     [Column("user_id")]
     [Required]
-    public Guid UserId { get; set; }
+    public User User { get; set; }
 }
